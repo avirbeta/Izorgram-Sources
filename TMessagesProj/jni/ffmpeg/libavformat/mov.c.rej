@@ -1,0 +1,13 @@
+--- libavformat/mov.c
++++ libavformat/mov.c
+@@ -2821,8 +2821,8 @@ static void mov_parse_stsd_audio(MOVContext *c, AVIOContext *pb,
+             sc->samples_per_frame = avio_rb32(pb);
+             if (st->codecpar->codec_tag == MKTAG('l','p','c','m'))
+                 st->codecpar->codec_id =
+-                    ff_mov_get_lpcm_codec_id(st->codecpar->bits_per_coded_sample,
+-                                             flags);
++                    ff_get_pcm_codec_id(st->codecpar->bits_per_coded_sample,
++                                        flags & 1, flags & 2, flags & 4 ? -1 : 0);
+         }
+         if (version == 0 || (version == 1 && sc->audio_cid != -2)) {
+             /* can't correctly handle variable sized packet as audio unit */

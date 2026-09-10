@@ -1,0 +1,4 @@
+include ':TMessagesProj'
+include ':TMessagesProj_App'
+include ':jlatexmath'
+project(':jlatexmath').projectDir = new File('TMessagesProj/lib/jlatexmath/jlatexmath')

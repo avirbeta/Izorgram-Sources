@@ -1,0 +1,11 @@
+--- libavformat/cafdec.c
++++ libavformat/cafdec.c
+@@ -107,7 +107,7 @@ static int read_desc_chunk(AVFormatContext *s)
+ 
+     /* determine codec */
+     if (st->codecpar->codec_tag == MKTAG('l','p','c','m'))
+-        st->codecpar->codec_id = ff_mov_get_lpcm_codec_id(st->codecpar->bits_per_coded_sample, (flags ^ 0x2) | 0x4);
++        st->codecpar->codec_id = ff_get_pcm_codec_id(st->codecpar->bits_per_coded_sample, (flags ^ 0x2) & 1, (flags ^ 0x2) & 2, ((flags ^ 0x2) | 0x4) & 4 ? -1 : 0);
+     else
+         st->codecpar->codec_id = ff_codec_get_id(ff_codec_caf_tags, st->codecpar->codec_tag);
+     return 0;
