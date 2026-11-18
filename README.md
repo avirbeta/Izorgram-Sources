@@ -2,7 +2,7 @@
 
 Клиент Telegram на базе форка **Goregram** (`com.amanoteam.flonne`, релиз 12.10.1).
 
-Отдельная сборка APK: см. репозиторий [my-ai-apps](https://github.com/vany201847dody-art/my-ai-apps).
+Отдельная сборка APK: см. репозиторий [my-ai-apps](https://github.com/avirbeta/my-ai-apps).
 
 ## История проекта
 
