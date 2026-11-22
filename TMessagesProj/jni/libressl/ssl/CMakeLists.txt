@@ -54,6 +54,7 @@ set(
 	tls_lib.c
 	tls12_key_schedule.c
 	tls12_lib.c
+	tls12_legacy.c
 	tls12_record.c
 	tls12_record_layer.c
 	tls13_client.c

@@ -105,6 +105,7 @@ libssl_la_SOURCES += tls_key_share.c
 libssl_la_SOURCES += tls_lib.c
 libssl_la_SOURCES += tls12_key_schedule.c
 libssl_la_SOURCES += tls12_lib.c
+libssl_la_SOURCES += tls12_legacy.c
 libssl_la_SOURCES += tls12_record.c
 libssl_la_SOURCES += tls12_record_layer.c
 libssl_la_SOURCES += tls13_client.c
