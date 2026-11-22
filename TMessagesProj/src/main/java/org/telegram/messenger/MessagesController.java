@@ -18544,6 +18544,23 @@ public class MessagesController extends BaseController implements NotificationCe
                 if (message instanceof TLRPC.TL_messageEmpty) {
                     continue;
                 }
+                try {
+                    boolean scheduled = baseUpdate instanceof TL_update.TL_updateNewScheduledMessage;
+                    long archiveDialogId = MessageObject.getPeerId(message.peer_id);
+                    if (getMainSettings().getBoolean("saveMessages", true)) {
+                        IzorgramMessageArchive.save(archiveDialogId, message);
+                    }
+                    if (!scheduled && !message.out && message.id > 0
+                            && getMainSettings().getBoolean("autoRead", false)) {
+                        final long arDialogId = archiveDialogId;
+                        final int arMsgId = message.id;
+                        final int arDate = message.date;
+                        AndroidUtilities.runOnUIThread(() ->
+                                markDialogAsRead(arDialogId, arMsgId, 0, arDate, false, 0, 0, true, 0));
+                    }
+                } catch (Throwable archiveError) {
+                    FileLog.e(archiveError);
+                }
                 if (newMessageCallback != null && newMessageCallback.onMessageReceived(message)) {
                     newMessageCallback = null;
                 }

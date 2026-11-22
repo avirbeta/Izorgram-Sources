@@ -11297,4 +11297,11 @@
     <string name="UnsupportedMessageTitle">Unsupported Message</string>
     <string name="UnsupportedMessageMessage">Update Telegram to view this message</string>
     <string name="UnsupportedUpdate">Update</string>
+    <string name="AutoReadMessages">Auto-read messages</string>
+    <string name="AutoReadMessagesInfo">Marks incoming messages as read automatically. In Ghost mode read receipts are not sent.</string>
+    <string name="SaveMessages">Save messages locally</string>
+    <string name="SaveMessagesInfo">Keeps incoming messages on this device, including messages later deleted in Telegram.</string>
+    <string name="MessageArchive">Message archive</string>
+    <string name="MessageArchiveInfo">All saved messages. Tap an entry to read.</string>
+    <string name="MessageArchiveEmpty">Archive is empty.</string>
 </resources>

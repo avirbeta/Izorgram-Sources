@@ -108,6 +108,18 @@ public class GeneralSettingsActivity extends BaseFragment {
 
         items.add(UItem.asShadow(null));
 
+        UItem autoRead = UItem.asCheck(32, getString(R.string.AutoReadMessages)).setChecked(prefs.getBoolean("autoRead", false));
+        autoRead.subtext = getString(R.string.AutoReadMessagesInfo);
+        items.add(autoRead);
+
+        UItem saveMessages = UItem.asCheck(33, getString(R.string.SaveMessages)).setChecked(prefs.getBoolean("saveMessages", true));
+        saveMessages.subtext = getString(R.string.SaveMessagesInfo);
+        items.add(saveMessages);
+
+        items.add(UItem.asButton(34, getString(R.string.MessageArchive), getString(R.string.MessageArchiveInfo)));
+
+        items.add(UItem.asShadow(null));
+
         UItem disableAds = UItem.asCheck(10, getString(R.string.DisableAds)).setChecked(prefs.getBoolean("disable_ads", false));
         disableAds.subtext = getString(R.string.DisableAdsInfo);
         items.add(disableAds);
@@ -192,6 +204,15 @@ public class GeneralSettingsActivity extends BaseFragment {
                 break;
             case 6:
                 toggle(6, PREF_HIDE_STORY_VIEWS, view);
+                break;
+            case 32:
+                toggle(32, "autoRead", view);
+                break;
+            case 33:
+                toggle(33, "saveMessages", view);
+                break;
+            case 34:
+                presentFragment(new IzorgramArchiveActivity());
                 break;
             case 10:
                 toggle(10, "disable_ads", view);

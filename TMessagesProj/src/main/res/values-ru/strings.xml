@@ -326,4 +326,11 @@
     <string name="RemindTodayAt">\'Отправить сегодня в\' HH:mm</string>
     <string name="RemindDayAt">\'Отправить\' d MMM \'в\' HH:mm</string>
     <string name="RemindDayYearAt">\'Напомнить\' d MMM yyyy \'в\' HH:mm</string>
+    <string name="AutoReadMessages">Авточтение сообщений</string>
+    <string name="AutoReadMessagesInfo">Автоматически отмечает входящие прочитанными. В Ghost mode отметки не отправляются.</string>
+    <string name="SaveMessages">Сохранять сообщения</string>
+    <string name="SaveMessagesInfo">Хранит входящие сообщения на устройстве, даже если их удалят в Telegram.</string>
+    <string name="MessageArchive">Архив сообщений</string>
+    <string name="MessageArchiveInfo">Все сохранённые сообщения. Нажми на запись, чтобы прочитать.</string>
+    <string name="MessageArchiveEmpty">Архив пуст.</string>
 </resources>
