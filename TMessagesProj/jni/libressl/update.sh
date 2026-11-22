@@ -424,7 +424,8 @@ if [ -x /opt/freeware/bin/patch ]; then
     PATCH=/opt/freeware/bin/patch
 fi
 for i in patches/*.patch; do
-    $PATCH -p0 < $i
+    # -N: не спрашивать про уже применённые патчи, -r -: не оставлять .rej
+    $PATCH -p0 -N -r - --batch < "$i" || true
 done
 
 # copy manpages
