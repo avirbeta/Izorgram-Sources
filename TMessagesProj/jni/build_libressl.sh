@@ -50,7 +50,7 @@ if [ -f "build/arm64-v8a/crypto/libcrypto.a" ] && [ -f "build/armeabi-v7a/crypto
 	exit 0
 fi
 
-if [ ! -f include/openssl/aes.h ] || [ ! -f configure ]; then
+if [ ! -f include/openssl/aes.h ] || [ ! -f configure ] || [ ! -f crypto/ec/ec_curve_tables.h ]; then
 	echo "Bootstrapping LibreSSL portable sources..."
 	./update.sh
 	./autogen.sh
