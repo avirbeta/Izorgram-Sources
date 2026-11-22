@@ -149,7 +149,6 @@ public class GeneralSettingsActivity extends BaseFragment {
         items.add(hideLastSeen);
 
         items.add(UItem.asButton(28, getString(R.string.IzorgramStats)));
-        items.add(UItem.asButton(31, getString(R.string.IzorgramVpnTitle)));
 
         items.add(UItem.asButton(27, getString(R.string.IzorgramGame)));
         items.add(UItem.asButton(24, getString(R.string.IzorgramJoinChannel)));
@@ -246,9 +245,6 @@ public class GeneralSettingsActivity extends BaseFragment {
                 break;
             case 28:
                 presentFragment(new IzorgramStatsActivity());
-                break;
-            case 31:
-                presentFragment(new IzorgramVpnActivity());
                 break;
             case 27:
                 presentFragment(new IzorgramGameActivity());

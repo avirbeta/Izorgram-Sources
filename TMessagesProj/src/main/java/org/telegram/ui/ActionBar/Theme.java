@@ -1652,8 +1652,7 @@ public class Theme {
             if (isDark != UNKNOWN) {
                 return isDark == DARK;
             }
-            if ("Dark Blue".equals(name) || "Night".equals(name) || "Monet Dark".equals(name) || "Monet AMOLED".equals(name)
-                    || "Neon Pink".equals(name) || "Neon Cyan".equals(name) || "Neon Green".equals(name) || "Neon Purple".equals(name)) {
+            if ("Dark Blue".equals(name) || "Night".equals(name) || "Monet Dark".equals(name) || "Monet AMOLED".equals(name)) {
                 isDark = DARK;
             } else if ("Blue".equals(name) || "Arctic Blue".equals(name) || "Day".equals(name) || "Monet Light".equals(name)) {
                 isDark = LIGHT;
@@ -3968,46 +3967,6 @@ public class Theme {
         sortAccents(themeInfo);
         themes.add(themeInfo);
         themesDict.put("Arctic Blue", themeInfo);
-
-        themeInfo = new ThemeInfo();
-        themeInfo.name = "Neon Pink";
-        themeInfo.assetName = "neon_pink.attheme";
-        themeInfo.previewBackgroundColor = 0xff1A0033;
-        themeInfo.previewInColor = 0xff330066;
-        themeInfo.previewOutColor = 0xff6600CC;
-        themeInfo.sortIndex = 10;
-        themes.add(themeInfo);
-        themesDict.put("Neon Pink", themeInfo);
-
-        themeInfo = new ThemeInfo();
-        themeInfo.name = "Neon Cyan";
-        themeInfo.assetName = "neon_cyan.attheme";
-        themeInfo.previewBackgroundColor = 0xff001A33;
-        themeInfo.previewInColor = 0xff003366;
-        themeInfo.previewOutColor = 0xff0066CC;
-        themeInfo.sortIndex = 11;
-        themes.add(themeInfo);
-        themesDict.put("Neon Cyan", themeInfo);
-
-        themeInfo = new ThemeInfo();
-        themeInfo.name = "Neon Green";
-        themeInfo.assetName = "neon_green.attheme";
-        themeInfo.previewBackgroundColor = 0xff001A00;
-        themeInfo.previewInColor = 0xff003300;
-        themeInfo.previewOutColor = 0xff006600;
-        themeInfo.sortIndex = 12;
-        themes.add(themeInfo);
-        themesDict.put("Neon Green", themeInfo);
-
-        themeInfo = new ThemeInfo();
-        themeInfo.name = "Neon Purple";
-        themeInfo.assetName = "neon_purple.attheme";
-        themeInfo.previewBackgroundColor = 0xff1A0033;
-        themeInfo.previewInColor = 0xff330066;
-        themeInfo.previewOutColor = 0xff660099;
-        themeInfo.sortIndex = 13;
-        themes.add(themeInfo);
-        themesDict.put("Neon Purple", themeInfo);
 
         themeInfo = new ThemeInfo();
         themeInfo.name = "Day";

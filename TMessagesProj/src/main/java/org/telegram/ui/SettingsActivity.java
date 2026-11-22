@@ -737,8 +737,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
         if (items.get(items.size() - 1).viewType != UniversalAdapter.VIEW_TYPE_SHADOW)
             items.add(UItem.asShadow(null));
 
-        items.add(UItem.asHeader(getString(R.string.NeonThemes)));
-        items.add(SettingCell.Factory.of(600, 0xFFB659FF, 0xFF617CFF, R.drawable.settings_chat, getString(R.string.NeonThemes), getString(R.string.NeonThemesInfo)));
+        items.add(UItem.asHeader(getString(R.string.Settings)));
         items.add(SettingCell.Factory.of(601, IconBackgroundColors.GRAY.top, IconBackgroundColors.GRAY.bottom, R.drawable.settings_devices, getString(R.string.AIAssistant), getString(R.string.AISettingsInfo)));
         items.add(UItem.asShadow(null));
 
@@ -891,10 +890,6 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
             }
             case 500: {
                 presentSettingFragment(new GeneralSettingsActivity());
-                break;
-            }
-            case 600: {
-                presentSettingFragment(new NeonThemesActivity());
                 break;
             }
             case 601: {

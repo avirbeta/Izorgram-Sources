@@ -462,18 +462,6 @@
             android:foregroundServiceType="mediaPlayback"
         />
         <service
-            android:name=".IzorgramVpnService"
-            android:exported="false"
-            android:foregroundServiceType="specialUse"
-            android:permission="android.permission.BIND_VPN_SERVICE">
-            <intent-filter>
-                <action android:name="android.net.VpnService" />
-            </intent-filter>
-            <property
-                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
-                android:value="VPN tunnel for Telegram traffic" />
-        </service>
-        <service
             android:name=".NotificationsService"
             android:enabled="true"
             android:exported="true"
