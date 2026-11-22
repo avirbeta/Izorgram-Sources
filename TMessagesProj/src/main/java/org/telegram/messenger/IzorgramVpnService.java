@@ -43,6 +43,11 @@ public class IzorgramVpnService extends VpnService implements DialerController {
         if (link != null) {
             currentLink = link;
         }
+        if (currentLink == null || currentLink.isEmpty()) {
+            // START_STICKY может перезапустить сервис без ссылки — не держим пустой туннель.
+            stopSelf();
+            return START_NOT_STICKY;
+        }
         startForeground(1, buildNotification(getString(R.string.IzorgramVpnTitle), connectionStatus()));
         ensureTunnel();
         return START_STICKY;
@@ -51,8 +56,20 @@ public class IzorgramVpnService extends VpnService implements DialerController {
     @Override
     public void onDestroy() {
         stopConnection();
+        try {
+            stopForeground(true);
+        } catch (Exception ignore) {
+        }
         instance = null;
         super.onDestroy();
+    }
+
+    @Override
+    public void onRevoke() {
+        // Пользователь отключил VPN или его перехватило другое приложение.
+        stopConnection();
+        stopSelf();
+        super.onRevoke();
     }
 
     @Override
@@ -145,7 +162,7 @@ public class IzorgramVpnService extends VpnService implements DialerController {
         long t0 = System.currentTimeMillis();
         while (!Incycore.isXrayRunning()) {
             if (System.currentTimeMillis() - t0 > 15000) {
-                break;
+                throw new Exception("Xray start timeout");
             }
             try {
                 Thread.sleep(100);
@@ -254,8 +271,11 @@ public class IzorgramVpnService extends VpnService implements DialerController {
     }
 
     private Notification buildNotification(String title, String text) {
-        Intent intent = new Intent(this, IzorgramVpnService.class);
-        PendingIntent pi = PendingIntent.getActivities(this, 0, new Intent[]{intent}, PendingIntent.FLAG_IMMUTABLE);
+        // Intent на сервис через getActivities не работает: нужен getActivity.
+        Intent intent = new Intent(this, org.telegram.ui.LaunchActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent pi = PendingIntent.getActivity(this, 0, intent,
+                PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
         Notification.Builder b;
         if (Build.VERSION.SDK_INT >= 26) {
             b = new Notification.Builder(this, CHANNEL);

@@ -132,10 +132,14 @@ public class VpnXrayConfig {
 
     private static String b64(String s, boolean urlSafe) {
         try {
+            String value = s.trim();
             if (urlSafe) {
-                return new String(android.util.Base64.decode(s.replace("-", "+").replace("_", "/"), android.util.Base64.DEFAULT), StandardCharsets.UTF_8);
+                value = value.replace("-", "+").replace("_", "/");
             }
-            return new String(android.util.Base64.decode(s, android.util.Base64.DEFAULT), StandardCharsets.UTF_8);
+            while (value.length() % 4 != 0) {
+                value += "=";
+            }
+            return new String(android.util.Base64.decode(value, android.util.Base64.DEFAULT), StandardCharsets.UTF_8);
         } catch (Exception e) {
             return null;
         }
@@ -147,6 +151,9 @@ public class VpnXrayConfig {
         String host = uri.getHost();
         int port = port(uri);
         String id = uri.getRawUserInfo();
+        if (host == null || host.isEmpty() || id == null || id.isEmpty()) {
+            throw new IllegalArgumentException("invalid vless link");
+        }
 
         JSONObject outbound = new JSONObject();
         outbound.put("protocol", "vless");
@@ -246,6 +253,9 @@ public class VpnXrayConfig {
         String host = uri.getHost();
         int port = port(uri);
         String password = uri.getRawUserInfo();
+        if (host == null || host.isEmpty() || password == null || password.isEmpty()) {
+            throw new IllegalArgumentException("invalid trojan link");
+        }
 
         JSONObject outbound = new JSONObject();
         outbound.put("protocol", "trojan");
@@ -265,51 +275,49 @@ public class VpnXrayConfig {
 
     private static JSONObject shadowsocks(String link) throws Exception {
         String body = link.substring("ss://".length());
-        String name = "";
-        int hashIdx = body.lastIndexOf('#');
-        if (hashIdx >= 0) {
-            name = body.substring(hashIdx + 1);
-            body = body.substring(0, hashIdx);
-        }
-        String sspart = body;
-        String plugin = null;
-        if (body.contains("?plugin=")) {
-            int qi = body.indexOf("?plugin=");
-            sspart = body.substring(0, qi);
-            plugin = urlDecode(body.substring(qi + 8));
-        }
-        String plain = b64(sspart, false);
+        int hash = body.indexOf('#');
+        if (hash >= 0) body = body.substring(0, hash);
+        int query = body.indexOf('?');
+        if (query >= 0) body = body.substring(0, query);
+
         String method = null;
         String password = null;
         String host = null;
         int port = 443;
-        if (plain != null && plain.contains("@")) {
-            int at = plain.lastIndexOf('@');
-            String mp = plain.substring(0, at);
-            String hp = plain.substring(at + 1);
-            int colon = mp.indexOf(':');
-            if (colon > 0) {
-                method = mp.substring(0, colon);
-                password = mp.substring(colon + 1);
+
+        int at = body.lastIndexOf('@');
+        String credentials;
+        String hostPort;
+        if (at > 0) {
+            String userInfo = body.substring(0, at);
+            hostPort = body.substring(at + 1);
+            String decoded = b64(userInfo, true);
+            credentials = decoded != null && decoded.contains(":") ? decoded : urlDecode(userInfo);
+        } else {
+            String decoded = b64(body, true);
+            if (decoded == null || decoded.lastIndexOf('@') < 0) {
+                throw new IllegalArgumentException("invalid shadowsocks link");
             }
-            int hc = hp.lastIndexOf(':');
-            if (hc > 0) {
-                host = hp.substring(0, hc);
-                try {
-                    port = Integer.parseInt(hp.substring(hc + 1));
-                } catch (Exception ignore) {
-                }
+            int decodedAt = decoded.lastIndexOf('@');
+            credentials = decoded.substring(0, decodedAt);
+            hostPort = decoded.substring(decodedAt + 1);
+        }
+
+        int colon = credentials.indexOf(':');
+        if (colon > 0) {
+            method = credentials.substring(0, colon);
+            password = credentials.substring(colon + 1);
+        }
+        int hp = hostPort.lastIndexOf(':');
+        if (hp > 0) {
+            host = hostPort.substring(0, hp);
+            try {
+                port = Integer.parseInt(hostPort.substring(hp + 1));
+            } catch (NumberFormatException ignore) {
             }
         }
-        if (method == null || host == null) {
-            String bs = b64(body, false);
-            if (bs == null) {
-                bs = body;
-            }
-            String[] m = bs.split(":");
-            if (m.length >= 2 && !bs.contains("@")) {
-                method = m[0];
-            }
+        if (method == null || method.isEmpty() || host == null || host.isEmpty()) {
+            throw new IllegalArgumentException("invalid shadowsocks link");
         }
 
         JSONObject outbound = new JSONObject();
@@ -317,14 +325,10 @@ public class VpnXrayConfig {
         JSONObject settings = new JSONObject();
         JSONArray servers = new JSONArray();
         JSONObject s = new JSONObject();
-        s.put("address", host != null ? host : "");
+        s.put("address", host);
         s.put("port", port);
-        if (method != null) {
-            s.put("method", method);
-        }
-        if (password != null) {
-            s.put("password", password);
-        }
+        s.put("method", method);
+        s.put("password", password != null ? password : "");
         servers.put(s);
         settings.put("servers", servers);
         outbound.put("settings", settings);
@@ -414,25 +418,24 @@ public class VpnXrayConfig {
         }
         ss.put("security", security);
         if (!"none".equals(security)) {
-            JSONObject tls = new JSONObject();
-            JSONObject reality = new JSONObject();
-            boolean isReality = "reality".equals(security);
-            boolean hasPublic = q.containsKey("publicKey");
-            if (isReality || hasPublic) {
-                tls.put("fingerprint", fp != null ? fp : "chrome");
-                if (hasPublic) {
+            boolean isReality = "reality".equals(security) || q.containsKey("publicKey");
+            if (isReality) {
+                // Xray ждёт realitySettings на уровне streamSettings, а не внутри tlsSettings.
+                JSONObject reality = new JSONObject();
+                reality.put("fingerprint", fp != null && !fp.isEmpty() ? fp : "chrome");
+                String realityName = sni != null && !sni.isEmpty() ? sni : host;
+                if (realityName != null && !realityName.isEmpty()) {
+                    reality.put("serverName", realityName);
+                }
+                if (q.containsKey("publicKey")) {
                     reality.put("publicKey", q.get("publicKey"));
                 }
                 if (q.containsKey("shortId")) {
                     reality.put("shortId", q.get("shortId"));
                 }
-                if ("reality".equals(security) && !hasPublic) {
-                    reality.put("show", false);
-                }
-                if (flow != null && !flow.isEmpty()) {
-                    reality.put("spiderX", "");
-                }
+                ss.put("realitySettings", reality);
             } else {
+                JSONObject tls = new JSONObject();
                 tls.put("allowInsecure", true);
                 if (fp != null && !fp.isEmpty()) {
                     tls.put("fingerprint", fp);
@@ -446,16 +449,13 @@ public class VpnXrayConfig {
                     }
                     tls.put("alpn", a);
                 }
+                if (sni != null && !sni.isEmpty()) {
+                    tls.put("serverName", sni);
+                } else if (host != null && !host.isEmpty()) {
+                    tls.put("serverName", host);
+                }
+                ss.put("tlsSettings", tls);
             }
-            if (sni != null && !sni.isEmpty()) {
-                tls.put("serverName", sni);
-            } else if (host != null && !host.isEmpty()) {
-                tls.put("serverName", host);
-            }
-            if (isReality) {
-                tls.put("realitySettings", reality);
-            }
-            ss.put("tlsSettings", tls);
         }
         return ss;
     }

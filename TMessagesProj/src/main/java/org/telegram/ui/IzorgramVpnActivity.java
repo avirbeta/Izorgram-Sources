@@ -321,21 +321,26 @@ public class IzorgramVpnActivity extends BaseFragment {
     private void fetchList(final String url) {
         Utilities.globalQueue.postRunnable(() -> {
             String data = null;
+            HttpURLConnection conn = null;
             try {
-                HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+                conn = (HttpURLConnection) new URL(url).openConnection();
                 conn.setConnectTimeout(8000);
                 conn.setReadTimeout(8000);
-                InputStream is = conn.getInputStream();
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                byte[] buf = new byte[4096];
-                int r;
-                while ((r = is.read(buf)) > 0) {
-                    baos.write(buf, 0, r);
+                try (InputStream is = conn.getInputStream()) {
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    byte[] buf = new byte[4096];
+                    int r;
+                    while ((r = is.read(buf)) > 0) {
+                        baos.write(buf, 0, r);
+                    }
+                    data = baos.toString("UTF-8");
                 }
-                is.close();
-                data = baos.toString("UTF-8");
             } catch (Exception e) {
                 FileLog.e(e);
+            } finally {
+                if (conn != null) {
+                    conn.disconnect();
+                }
             }
             if (data == null || data.trim().isEmpty()) {
                 AndroidUtilities.runOnUIThread(() -> BulletinFactory.of(IzorgramVpnActivity.this).createSimpleBulletin(R.raw.error, getString(R.string.IzorgramVpnFetchFail)).show(true));
@@ -558,10 +563,8 @@ public class IzorgramVpnActivity extends BaseFragment {
 
     private static long pingServer(Server s) {
         long start = System.currentTimeMillis();
-        try {
-            java.net.Socket socket = new java.net.Socket();
+        try (java.net.Socket socket = new java.net.Socket()) {
             socket.connect(new InetSocketAddress(s.host, s.port), 5000);
-            socket.close();
             return System.currentTimeMillis() - start;
         } catch (Exception e) {
             return -2;
