@@ -1,5 +1,7 @@
 package org.telegram.ui;
 
+import static org.telegram.messenger.LocaleController.getString;
+
 import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
