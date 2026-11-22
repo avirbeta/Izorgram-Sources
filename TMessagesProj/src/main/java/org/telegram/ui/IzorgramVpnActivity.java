@@ -650,7 +650,7 @@ public class IzorgramVpnActivity extends BaseFragment {
         if (listView != null && listView.adapter != null) {
             listView.adapter.update(false);
         }
-        BulletinFactory.of(this).createSimpleBulletin(R.raw.contact_check, formatString(R.string.IzorgramVpnConnected, s.name != null && !s.name.isEmpty() ? s.name : s.host)).show(true);
+        BulletinFactory.of(this).createSimpleBulletin(R.raw.contact_check, formatString(R.string.IzorgramVpnConnecting, s.name != null && !s.name.isEmpty() ? s.name : s.host)).show(true);
     }
 
     private static String linkFromFields(Server s) {

@@ -62,6 +62,7 @@
     <string name="IzorgramVpnParseFail">Could not parse this link</string>
     <string name="IzorgramVpnFetchFail">Subscription fetch failed</string>
     <string name="IzorgramVpnNeedXray">%1$s requires Xray-core, which is not included. SOCKS5 is supported natively.</string>
+    <string name="IzorgramVpnConnecting">Connecting to %1$s…</string>
     <string name="IzorgramVpnConnected">Connected to %1$s</string>
     <string name="IzorgramVpnDisconnected">VPN disconnected</string>
     <string name="IzorgramVpnSystemStatus">System-wide VPN</string>

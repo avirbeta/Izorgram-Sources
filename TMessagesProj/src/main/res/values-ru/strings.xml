@@ -60,6 +60,7 @@
     <string name="IzorgramVpnParseFail">Не удалось разобрать ссылку</string>
     <string name="IzorgramVpnFetchFail">Не удалось загрузить подписку</string>
     <string name="IzorgramVpnNeedXray">%1$s требует Xray-core, которого нет в приложении. Нативно поддерживается SOCKS5.</string>
+    <string name="IzorgramVpnConnecting">Подключение к %1$s…</string>
     <string name="IzorgramVpnConnected">Подключено к %1$s</string>
     <string name="IzorgramVpnDisconnected">VPN отключён</string>
     <string name="ContinueOnThisLanguage">Продолжить на русском</string>
