@@ -94,7 +94,6 @@ libtest_la_SOURCES = empty.c
 
 LDADD = libtest.la $(PLATFORM_LDADD) $(PROG_LDADD)
 
-TESTS_ENVIRONMENT = PERL='$(PERL)'
 TEST_LOG_DRIVER = env AM_TAP_AWK='$(AWK)' $(SHELL) $(top_srcdir)/tap-driver.sh
 
 TESTS =
@@ -102,11 +101,6 @@ XFAIL_TESTS =
 check_PROGRAMS =
 EXTRA_DIST = CMakeLists.txt
 DISTCLEANFILES = pidwraptest.txt
-
-distclean-local:
-	rm -rf ssl_verify-certs
-	rm -rf x509_callback-certs
-	rm -rf x509_verify-certs
 
 # XXX - should probably be in their own static lib
 TEST_HELPER_SRC = test.c test_util.c
@@ -309,17 +303,6 @@ TESTS += bn_mont
 check_PROGRAMS += bn_mont
 bn_mont_SOURCES = bn_mont.c
 
-# bn_mul_div is mostly benchmark code with non-standard timing dependencies,
-# while the non-benchmark test coverage is not worth the cross-platform fallout.
-## bn_mul_div
-#if !HOST_WIN
-#if !HOST_SOLARIS
-#TESTS += bn_mul_div
-#check_PROGRAMS += bn_mul_div
-#bn_mul_div_SOURCES = bn_mul_div.c
-#endif
-#endif
-
 # bn_primes
 TESTS += bn_primes
 check_PROGRAMS += bn_primes
@@ -366,21 +349,8 @@ TESTS += bytestringtest
 check_PROGRAMS += bytestringtest
 bytestringtest_SOURCES = bytestringtest.c
 
-# x509_callbacks
-if HAVE_PERL
-# These tests use the same certificate corpus as x509_verify and can exceed
-# the range of a 32-bit time_t.
-if SMALL_TIME_T
-XFAIL_TESTS += x509_callbacks.sh
-endif
-TESTS += x509_callbacks.sh
-check_PROGRAMS += callback callbackfailures expirecallback
-endif
-callback_SOURCES = callback.c
-callbackfailures_SOURCES = callbackfailures.c
-expirecallback_SOURCES = expirecallback.c
-EXTRA_DIST += x509_callbacks.sh
-EXTRA_DIST += callback.pl
+# callback
+# callbackfailures
 
 # casttest
 TESTS += casttest
@@ -461,16 +431,6 @@ dsatest_SOURCES = dsatest.c
 #endif
 #EXTRA_DIST += dtlstest.sh
 
-# dtls_handshake_msg_test
-TESTS += dtls_handshake_msg_test
-check_PROGRAMS += dtls_handshake_msg_test
-dtls_handshake_msg_test_SOURCES = dtls_handshake_msg_test.c
-
-# dtls_wire_test
-TESTS += dtls_wire_test
-check_PROGRAMS += dtls_wire_test
-dtls_wire_test_SOURCES = dtls_wire_test.c
-
 # ecc_cdh
 TESTS += ecc_cdh
 check_PROGRAMS += ecc_cdh
@@ -537,6 +497,8 @@ evp_test_SOURCES = evp_test.c
 TESTS += exdata_test
 check_PROGRAMS += exdata_test
 exdata_test_SOURCES = exdata_test.c
+
+# expirecallback.c
 
 # explicit_bzero
 # explicit_bzero relies on SA_ONSTACK, which is unavailable on Windows
@@ -848,11 +810,6 @@ ssl_get_shared_ciphers_CPPFLAGS = $(AM_CPPFLAGS) -DCERTSDIR=\"$(srcdir)\"
 check_PROGRAMS += ssl_get_shared_ciphers
 ssl_get_shared_ciphers_SOURCES = ssl_get_shared_ciphers.c
 
-# ssl_kex
-TESTS += ssl_kex
-check_PROGRAMS += ssl_kex
-ssl_kex_SOURCES = ssl_kex.c
-
 # ssl_methods
 TESTS += ssl_methods
 check_PROGRAMS += ssl_methods
@@ -868,26 +825,10 @@ TESTS += ssl_verify_param
 check_PROGRAMS += ssl_verify_param
 ssl_verify_param_SOURCES = ssl_verify_param.c
 
-# ssl_verify
-if HAVE_PERL_IO_SOCKET_SSL_UTILS
-TESTS += ssl_verify.sh
-check_PROGRAMS += ssl_verify
-endif
-ssl_verify_SOURCES = ssl_verify.c
-EXTRA_DIST += ssl_verify.sh
-EXTRA_DIST += ssl_verify.bat
-EXTRA_DIST += create-libressl-test-certs.pl
-
 # ssl_versions
 TESTS += ssl_versions
 check_PROGRAMS += ssl_versions
 ssl_versions_SOURCES = ssl_versions.c
-
-# ssl_tlstest
-TESTS += ssl_tlstest.sh
-check_PROGRAMS += ssl_tlstest
-ssl_tlstest_SOURCES = ssl_tlstest.c
-EXTRA_DIST += ssl_tlstest.sh
 
 # ssltest
 TESTS += ssltest.sh
@@ -964,21 +905,6 @@ TESTS += valid_handshakes_terminate
 check_PROGRAMS += valid_handshakes_terminate
 valid_handshakes_terminate_SOURCES = valid_handshakes_terminate.c
 
-# x509_verify
-if HAVE_PERL
-# This test depends on certificate times that can exceed 32-bit time_t
-# range, so match the existing time tests and expect failure there.
-if SMALL_TIME_T
-XFAIL_TESTS += x509_verify.sh
-endif
-TESTS += x509_verify.sh
-check_PROGRAMS += x509_verify
-endif
-x509_verify_SOURCES = x509_verify.c
-EXTRA_DIST += x509_verify.sh
-EXTRA_DIST += make-dir-roots.pl
-EXTRA_DIST += certs
-
 # verifytest
 TESTS += verifytest
 check_PROGRAMS += verifytest
@@ -1003,11 +929,6 @@ x509_algor_SOURCES = x509_algor.c
 TESTS += x509_asn1
 check_PROGRAMS += x509_asn1
 x509_asn1_SOURCES = x509_asn1.c
-
-# x509_crl
-TESTS += x509_crl
-check_PROGRAMS += x509_crl
-x509_crl_SOURCES = x509_crl.c
 
 # x509_extensions_test
 TESTS += x509_extensions_test
